@@ -1,0 +1,12 @@
+specVersion: "v1beta"
+serviceId: "3dynamo-web"
+location: "us-central1"
+schema:
+  source: "./schema"
+  datasource:
+    postgresql:
+      database: "fdcdb"
+      cloudSql:
+        instanceId: "3dynamo-web-fdc"
+      # schemaValidation: "COMPATIBLE"
+connectorDirs: ["./connector"]

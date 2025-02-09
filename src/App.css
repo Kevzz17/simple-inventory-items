@@ -1,0 +1,116 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Estilos generales del body */
+body {
+    font-family: "Arial", sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Contenedor principal */
+.flex-container {
+    margin: 0 auto;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+/* Encabezados */
+h1,
+h2 {
+    margin-bottom: 20px;
+    color: #444;
+    font-size: clamp(18px, 8vw, 60px);
+}
+
+/* Estilos para el formulario */
+form {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+form div {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus {
+    border-color: #aaa;
+    outline: none;
+}
+
+/* Botones generales */
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    background: #007bff;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+/* Lista de items */
+ul {
+    list-style: none;
+}
+
+li {
+    background: #fff;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Botón para borrar dentro de cada item */
+li button {
+    background: #dc3545;
+    margin-top: 10px;
+}
+
+li button:hover {
+    background: #b02a37;
+}
+
+/* Media Query para pantallas pequeñas */
+@media (max-width: 480px) {
+    .container {
+        padding: 10px;
+    }
+
+    button {
+        width: 100%;
+    }
+}
