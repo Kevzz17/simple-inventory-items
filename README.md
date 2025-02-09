@@ -1,8 +1,20 @@
-# React + Vite
+# 3D Print Lab Inventory
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este es un sistema web simple de inventario diseñado para gestionar los materiales, herramientas y equipos en un laboratorio de impresión 3D.
 
-Currently, two official plugins are available:
+## Características
+- Registro de materiales y herramientas.
+- Gestión de stock y disponibilidad.
+- Interfaz simple y fácil de usar.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tecnologías Utilizadas
+- **Frontend**: HTML, CSS, React.
+- **Base de datos**: Firebase / FireStore.
+
+## Uso
+- Agregar nuevos materiales y herramientas al inventario.
+- Modificar el stock y registrar el uso de insumos.
+
+---
+**Desarrollado por Kevzz17**
+
