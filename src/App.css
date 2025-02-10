@@ -33,29 +33,24 @@ h2 {
 
 /* Estilos para el formulario */
 form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 1000px;
     background: #fff;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin-bottom: 30px;
-}
-
-form div {
-    margin-bottom: 15px;
-}
-
-label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
+    border-radius: 16px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    gap: 8px;
 }
 
 input[type="text"],
 input[type="number"] {
     width: 100%;
     padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    border: none;
+    border-radius: 8px;
     font-size: 14px;
 }
 
@@ -67,6 +62,7 @@ input[type="number"]:focus {
 
 /* Botones generales */
 button {
+    opacity: 0.8;
     padding: 10px 20px;
     border: none;
     border-radius: 4px;
@@ -74,24 +70,38 @@ button {
     color: #fff;
     font-size: 14px;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: all 0.2s ease;
+    width: 50%;
+    font-weight: bold;
 }
 
 button:hover {
-    background: #0056b3;
+    opacity: 1;
 }
 
 /* Lista de items */
 ul {
+    width: 100%;
+    max-width: 1200px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 10px;
+    padding: 0;
     list-style: none;
 }
 
 li {
-    background: #fff;
+    background: #fff6e0;
     padding: 15px;
-    margin-bottom: 15px;
     border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    opacity: 0.9;
+    transition: all 0.2s ease;
+}
+
+li:hover {
+    transform: scale(1.03);
+    opacity: 1;
 }
 
 /* Botón para borrar dentro de cada item */
@@ -100,8 +110,53 @@ li button {
     margin-top: 10px;
 }
 
-li button:hover {
-    background: #b02a37;
+li input {
+    margin-bottom: 5px;
+}
+
+.options--container {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.edit--button {
+    background-color: #e39e49;
+}
+
+.confirm--button {
+    background-color: #4eac44;
+}
+
+.cancel--button {
+    background-color: #dc3545;
+}
+
+.quantity--container {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+.quantity--button {
+    background-color: #007bff;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 14px;
+}
+
+.quantity--input {
+    max-width: 100px;
+    text-align: center;
 }
 
 /* Media Query para pantallas pequeñas */

@@ -1,13 +1,21 @@
 import { useState, useEffect } from "react";
 import { db } from "./firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
-import { collection, addDoc, getDocs, deleteDoc } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+  updateDoc,
+} from "firebase/firestore";
 import "./App.css";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passwordInput, setPasswordInput] = useState("");
   const [storedPassword, setStoredPassword] = useState("");
+  const [editingItem, setEditingItem] = useState(null);
+  const [tempData, setTempData] = useState({});
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -38,6 +46,36 @@ function App() {
     } else {
       alert("Contraseña incorrecta.");
     }
+  };
+
+  const startEditing = (item) => {
+    setEditingItem(item.id);
+    setTempData({ ...item });
+  };
+
+  const handleEditChange = (e) => {
+    setTempData({
+      ...tempData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const changeQuantity = (amount) => {
+    setTempData((prev) => ({
+      ...prev,
+      cantidad: Math.max(0, Number(prev.cantidad) + amount), // Evita números negativos
+    }));
+  };
+
+  const confirmEdit = async () => {
+    await updateDoc(doc(db, "inventario", editingItem), tempData);
+    setItems(items.map((item) => (item.id === editingItem ? tempData : item)));
+    setEditingItem(null);
+  };
+
+  const cancelEdit = () => {
+    setEditingItem(null);
+    setTempData({});
   };
 
   const [items, setItems] = useState([]);
@@ -156,14 +194,72 @@ function App() {
             <ul>
               {items.map((item) => (
                 <li key={item.id}>
-                  <p>
-                    <strong>{item.nombre}</strong> - {item.descripcion}
-                  </p>
-                  <p>
-                    Cantidad: {item.cantidad} | Estado: {item.estado} |
-                    Observaciones: {item.observaciones}
-                  </p>
-                  <button onClick={() => deleteItem(item.id)}>Borrar</button>
+                  {editingItem === item.id ? (
+                    <>
+                      <input
+                        type="text"
+                        name="nombre"
+                        value={tempData.nombre}
+                        onChange={handleEditChange}
+                      />
+                      <input
+                        type="text"
+                        name="descripcion"
+                        value={tempData.descripcion}
+                        onChange={handleEditChange}
+                      />
+                      <div className="quantity--container">
+                        <button className="quantity--button" onClick={() => changeQuantity(-1)}>-</button>
+                        <input
+                          className="quantity--input"
+                          type="number"
+                          name="cantidad"
+                          value={tempData.cantidad}
+                          onChange={handleEditChange}
+                          readOnly
+                        />
+                        <button className="quantity--button" onClick={() => changeQuantity(1)}>+</button>
+                      </div>
+                      <input
+                        type="text"
+                        name="estado"
+                        value={tempData.estado}
+                        onChange={handleEditChange}
+                      />
+                      <input
+                        type="text"
+                        name="observaciones"
+                        value={tempData.observaciones}
+                        onChange={handleEditChange}
+                      />
+                      <button className="confirm--button" onClick={confirmEdit}>Confirmar</button>
+                      <button className="cancel--button" onClick={cancelEdit}>Cancelar</button>
+                    </>
+                  ) : (
+                    <>
+                      <p>
+                        <strong>{item.nombre}</strong> - {item.descripcion}
+                      </p>
+                      <p>
+                        Cantidad: {item.cantidad} | Estado: {item.estado} |
+                        Observaciones: {item.observaciones}
+                      </p>
+                      <div className="options--container">
+                        <button
+                          className="edit--button"
+                          onClick={() => startEditing(item)}
+                        >
+                          Editar
+                        </button>
+                        <button
+                          className="delete--button"
+                          onClick={() => deleteItem(item.id)}
+                        >
+                          Borrar
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </li>
               ))}
             </ul>
