@@ -25,7 +25,6 @@ function App() {
         return;
       }
 
-      // Obtener contraseña desde Firestore
       const docRef = doc(db, "config", "admin");
       const docSnap = await getDoc(docRef);
 
@@ -69,7 +68,9 @@ function App() {
 
   const confirmEdit = async () => {
     await updateDoc(doc(db, "inventario", editingItem), tempData);
-    setItems(items.map((item) => (item.id === editingItem ? tempData : item)));
+    setItems(items.map((item) => 
+        item.id === editingItem ? { ...tempData, id: editingItem } : item
+    ));
     setEditingItem(null);
   };
 
@@ -85,13 +86,13 @@ function App() {
     cantidad: "",
     estado: "",
     observaciones: "",
+    categoria: "Robótica",
   });
 
   useEffect(() => {
     fetchItems();
   }, []);
 
-  // Obtener datos de Firestore
   const fetchItems = async () => {
     const querySnapshot = await getDocs(collection(db, "inventario"));
     const itemsArray = querySnapshot.docs.map((doc) => ({
@@ -101,7 +102,6 @@ function App() {
     setItems(itemsArray);
   };
 
-  // Manejar cambios en los inputs
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -109,7 +109,6 @@ function App() {
     });
   };
 
-  // Agregar un nuevo item a Firestore
   const addItem = async (e) => {
     e.preventDefault();
     const docRef = await addDoc(collection(db, "inventario"), formData);
@@ -120,10 +119,10 @@ function App() {
       cantidad: "",
       estado: "",
       observaciones: "",
+      categoria: "Robótica",
     });
   };
 
-  // Eliminar un item de Firestore
   const deleteItem = async (id) => {
     await deleteDoc(doc(db, "inventario", id));
     setItems(items.filter((item) => item.id !== id));
@@ -132,138 +131,181 @@ function App() {
   return (
     <div className="flex-container">
       {!isAuthenticated ? (
-        <div>
+        <div className="login--container">
           <h1>Acceso Administrador</h1>
           <input
+            className="login--input"
             type="password"
-            placeholder="Ingresa la contraseña"
+            placeholder="Ingresa la contraseña de administrador"
             value={passwordInput}
             onChange={(e) => setPasswordInput(e.target.value)}
           />
-          <button onClick={handleLogin}>Ingresar</button>
+          <button className="login--button" onClick={handleLogin}>Ingresar</button>
         </div>
       ) : (
         <>
-          <h1>Inventario Laboratorio de Impresión 3D</h1>
+          <h1>Inventario 3Dynamo | Laboratorio de Impresión 3D y Robótica</h1>
           <form onSubmit={addItem} style={{ marginBottom: "20px" }}>
-            <input
-              type="text"
-              name="nombre"
-              value={formData.nombre}
-              onChange={handleChange}
-              placeholder="Nombre"
-              required
-            />
-            <input
-              type="text"
-              name="descripcion"
-              value={formData.descripcion}
-              onChange={handleChange}
-              placeholder="Descripción"
-              required
-            />
-            <input
-              type="number"
-              name="cantidad"
-              value={formData.cantidad}
-              onChange={handleChange}
-              placeholder="Cantidad"
-              required
-            />
-            <input
-              type="text"
-              name="estado"
-              value={formData.estado}
-              onChange={handleChange}
-              placeholder="Estado"
-              required
-            />
-            <input
-              type="text"
-              name="observaciones"
-              value={formData.observaciones}
-              onChange={handleChange}
-              placeholder="Observaciones"
-            />
+            <input type="text" name="nombre" value={formData.nombre} onChange={handleChange} placeholder="Nombre del item" required />
+            <input type="text" name="descripcion" value={formData.descripcion} onChange={handleChange} placeholder="Descripción del item" required />
+            <input type="number" name="cantidad" value={formData.cantidad} onChange={handleChange} placeholder="Cantidad del item" required />
+            <input type="text" name="estado" value={formData.estado} onChange={handleChange} placeholder="Estado del item" required />
+            <input type="text" name="observaciones" value={formData.observaciones} onChange={handleChange} placeholder="Observaciones del item" />
+            <select name="categoria" value={formData.categoria} onChange={handleChange}>
+              <option value="Robótica">Robótica</option>
+              <option value="Impresión 3D">Impresión 3D</option>
+            </select>
             <button type="submit">Agregar</button>
           </form>
           <h2>Lista de Items</h2>
-          {items.length === 0 ? (
-            <p>No hay items en el inventario.</p>
-          ) : (
-            <ul>
-              {items.map((item) => (
-                <li key={item.id}>
-                  {editingItem === item.id ? (
-                    <>
-                      <input
-                        type="text"
-                        name="nombre"
-                        value={tempData.nombre}
-                        onChange={handleEditChange}
-                      />
-                      <input
-                        type="text"
-                        name="descripcion"
-                        value={tempData.descripcion}
-                        onChange={handleEditChange}
-                      />
-                      <div className="quantity--container">
-                        <button className="quantity--button" onClick={() => changeQuantity(-1)}>-</button>
-                        <input
-                          className="quantity--input"
-                          type="number"
-                          name="cantidad"
-                          value={tempData.cantidad}
-                          onChange={handleEditChange}
-                          readOnly
-                        />
-                        <button className="quantity--button" onClick={() => changeQuantity(1)}>+</button>
-                      </div>
-                      <input
-                        type="text"
-                        name="estado"
-                        value={tempData.estado}
-                        onChange={handleEditChange}
-                      />
-                      <input
-                        type="text"
-                        name="observaciones"
-                        value={tempData.observaciones}
-                        onChange={handleEditChange}
-                      />
-                      <button className="confirm--button" onClick={confirmEdit}>Confirmar</button>
-                      <button className="cancel--button" onClick={cancelEdit}>Cancelar</button>
-                    </>
-                  ) : (
-                    <>
-                      <p>
-                        <strong>{item.nombre}</strong> - {item.descripcion}
-                      </p>
-                      <p>
-                        Cantidad: {item.cantidad} | Estado: {item.estado} |
-                        Observaciones: {item.observaciones}
-                      </p>
-                      <div className="options--container">
-                        <button
-                          className="edit--button"
-                          onClick={() => startEditing(item)}
-                        >
-                          Editar
-                        </button>
-                        <button
-                          className="delete--button"
-                          onClick={() => deleteItem(item.id)}
-                        >
-                          Borrar
-                        </button>
-                      </div>
-                    </>
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
+          <h3 className="categoria--title robotica--title">Robótica</h3>
+          <div className="categoria--arrow arrow--1"></div>
+          <ul>
+            {items.filter(item => item.categoria === "Robótica").map(item => (
+              <li key={item.id}>
+              {editingItem === item.id ? (
+                <>
+                  <input
+                    type="text"
+                    name="nombre"
+                    value={tempData.nombre}
+                    onChange={handleEditChange}
+                  />
+                  <input
+                    type="text"
+                    name="descripcion"
+                    value={tempData.descripcion}
+                    onChange={handleEditChange}
+                  />
+                  <div className="quantity--container">
+                    <button className="quantity--button" onClick={() => changeQuantity(-1)}>-</button>
+                    <input
+                      className="quantity--input"
+                      type="number"
+                      name="cantidad"
+                      value={tempData.cantidad}
+                      onChange={handleEditChange}
+                      readOnly
+                    />
+                    <button className="quantity--button" onClick={() => changeQuantity(1)}>+</button>
+                  </div>
+                  <input
+                    type="text"
+                    name="estado"
+                    value={tempData.estado}
+                    onChange={handleEditChange}
+                  />
+                  <input
+                    type="text"
+                    name="observaciones"
+                    value={tempData.observaciones}
+                    onChange={handleEditChange}
+                  />
+                  <button className="confirm--button" onClick={confirmEdit}>Confirmar</button>
+                  <button className="cancel--button" onClick={cancelEdit}>Cancelar</button>
+                </>
+              ) : (
+                <>
+                  <p>
+                    <strong>{item.nombre}</strong> - {item.descripcion}
+                  </p>
+                  <p>
+                    Cantidad: {item.cantidad} | Estado: {item.estado} |
+                    Observaciones: {item.observaciones}
+                  </p>
+                  <div className="options--container">
+                    <button
+                      className="edit--button"
+                      onClick={() => startEditing(item)}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="delete--button"
+                      onClick={() => deleteItem(item.id)}
+                    >
+                      Borrar
+                    </button>
+                  </div>
+                </>
+              )}
+            </li>
+            ))}
+          </ul>
+          <h3 className="categoria--title impresion3d--title">Impresión 3D</h3>
+          <div className="categoria--arrow arrow--2"></div>
+          <ul>
+            {items.filter(item => item.categoria === "Impresión 3D").map(item => (
+              <li key={item.id}>
+              {editingItem === item.id ? (
+                <>
+                  <input
+                    type="text"
+                    name="nombre"
+                    value={tempData.nombre}
+                    onChange={handleEditChange}
+                  />
+                  <input
+                    type="text"
+                    name="descripcion"
+                    value={tempData.descripcion}
+                    onChange={handleEditChange}
+                  />
+                  <div className="quantity--container">
+                    <button className="quantity--button" onClick={() => changeQuantity(-1)}>-</button>
+                    <input
+                      className="quantity--input"
+                      type="number"
+                      name="cantidad"
+                      value={tempData.cantidad}
+                      onChange={handleEditChange}
+                      readOnly
+                    />
+                    <button className="quantity--button" onClick={() => changeQuantity(1)}>+</button>
+                  </div>
+                  <input
+                    type="text"
+                    name="estado"
+                    value={tempData.estado}
+                    onChange={handleEditChange}
+                  />
+                  <input
+                    type="text"
+                    name="observaciones"
+                    value={tempData.observaciones}
+                    onChange={handleEditChange}
+                  />
+                  <button className="confirm--button" onClick={confirmEdit}>Confirmar</button>
+                  <button className="cancel--button" onClick={cancelEdit}>Cancelar</button>
+                </>
+              ) : (
+                <>
+                  <p>
+                    <strong>{item.nombre}</strong> - {item.descripcion}
+                  </p>
+                  <p>
+                    Cantidad: {item.cantidad} | Estado: {item.estado} |
+                    Observaciones: {item.observaciones}
+                  </p>
+                  <div className="options--container">
+                    <button
+                      className="edit--button"
+                      onClick={() => startEditing(item)}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="delete--button"
+                      onClick={() => deleteItem(item.id)}
+                    >
+                      Borrar
+                    </button>
+                  </div>
+                </>
+              )}
+            </li>
+            ))}
+          </ul>
         </>
       )}
     </div>
